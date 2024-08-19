@@ -58,7 +58,8 @@ enum
 #define FLAG_OFF           0x00
 #define FLAG_ON            0x01
 #define FLAG_POLL          0x02
-#define NTP_SERVER        "pool.ntp.org"
+#define NTP_SERVER        "192.168.1.1"
+//#define NTP_SERVER        "pool.ntp.org"
 #define NTP_MSG_LEN        48
 #define NTP_PORT           123
 #define NTP_DELTA          2208988800   // number of seconds between 01-JAN-1900 and 01-JAN-1970.

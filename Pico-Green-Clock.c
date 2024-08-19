@@ -275,512 +275,9 @@
 
 
 
-/* $TITLE=Clock configuration or options. */
-/* $PAGE */
-/* ================================================================== *\
-              ===== CLOCK CONFIGURATION OR OPTIONS =====
-     SOME OF THESE ITEMS ARE ADJUSTABLE AT RUNTIME, OTHERS ARE NOT.
-     NOTE: Structure "CalendarEvent" should also be initialized
-             according to user needs. It is in the file:
-                     "CalendarEventsGeneric.cpp".
-\* ================================================================== */
-/* Firmware version. */
-#define FIRMWARE_VERSION "9.02"  ///
-
-/* Select the language for data display. */
-#define DEFAULT_LANGUAGE ENGLISH // choices for now are FRENCH, ENGLISH, GERMAN, and SPANISH.
-
-/* While in development mode, we may want to disable NTP update, for example while testing Summer Time handling algorithm. */
-// #define NTP_ENABLE  /// WARNING: This #define is not supported for now. Use "#define PICO_W" below instead to enable NTP for now.
-#define NETWORK_NAME     "MyNetworkName"  /// for those with a development environment, you can enter your SSID and password below, run the Firmware until the
-#define NETWORK_PASSWORD "MyPassword"     /// first date scrolling (credentials will be saved to flash), then erase the credentials and put comment on both lines.
-
-/* If a Pico W is used, librairies for Wi-Fi and NTP synchronization will be merged in the executable. If PICO_W is not defined, NTP is automatically disabled. */
-#define PICO_W  ///
-
-/* Flag to handle automatically the daylight saving time. List of countries are given in the User Guide. */
-#define DST_COUNTRY DST_NORTH_AMERICA
-
-/* Release or Developer Version: Make selective choices or options. */
-#define RELEASE_VERSION  ///
-
-
-
-/* ----------------------------------------------------------------------------------------------------------------------- *\
-                                             Setup specific to RELEASE version.
-\* ----------------------------------------------------------------------------------------------------------------------- */
-#ifdef RELEASE_VERSION
-#warning Built as RELEASE_VERSION
-
-/* Specify the filename of calendar events to merge with this version of firmware. */
-#define CALENDAR_FILENAME "CalendarEventsGeneric.cpp"
-
-/* Specify the filename of reminders to merge with this version of firmware. */
-#define REMINDER_FILENAME "RemindersGeneric.cpp"
-#endif  // RELEASE_VERSION
-/* ----------------------------------------------------------------------------------------------------------------------- *\
-                                           End of setup specific to RELEASE version.
-\* ----------------------------------------------------------------------------------------------------------------------- */
-
-
-
-
-
-/* ----------------------------------------------------------------------------------------------------------------------- *\
-                                               Setup specific to DEVELOPER version.
-   NOTE: Developer version requires a USB CDC communication to start. Refer to User Guide for details.
-\* ----------------------------------------------------------------------------------------------------------------------- */
-#ifndef RELEASE_VERSION
-#define DEVELOPER_VERSION
-#warning Built as DEVELOPER_VERSION
-
-/* Specify the filename of calendar events to merge with this version of firmware. */
-#define CALENDAR_FILENAME "CalendarEventsAndre.cpp"
-
-/* Specify the filename of calendar events to merge with this version of firmware. */
-#define REMINDER_FILENAME "RemindersAndre.cpp"
-
-/* Conditional compile to allow a quicker power-up sequence by-passing some device tests. */
-#define QUICK_START  ///
-#ifdef QUICK_START
-#warning Built with QUICK_START
-#endif  // QUICK_START
-
-/* If SOUND_DISABLED is commented out below, it allows turning Off <<< ABSOLUTELY ALL SOUNDS >>> from the Green Clock.
-   (For example, during development phase, if your wife is sleeping while you work late in the night as was my case - smile). */
-// #define SOUND_DISABLED  ///
-#ifdef SOUND_DISABLED
-#warning Built with SOUND DISABLED
-#endif  // SOUND_DISABLED
-
-/* Flag to include test code in the executable (conditional compile). Tests can be run before falling in normal clock ("time display") mode.
-   Keeping the comment sign on the #define below will exclude test code and make the executable smaller. */
-#define TEST_CODE
-
-/* Loop at the beginning of the code until a USB CDC connection has been established. Quick beeps will be heard during waiting so that user
-   is aware of what's going on. */
-#define USB_CONNECTION  ///
-#ifdef USB_CONNECTION
-#warning Built with USB_CONNECTION
-#endif  // USB_CONNECTION
-
-/* ---------------------------------------------------------------------------------- *\
-                          Options that can be installed by user.
-\* ---------------------------------------------------------------------------------- */
-/* Support for an optional passive buzzer. This buzzer must be provided by user and is not included with the Green Clock. 
-   It allows variable frequency sounds on the clock.
-   If you did install one, cut this block and paste is outside of the "#ifdef DEVELOPER_VERSION" and "#endif" to enable the "#define PASSIVE_PIEZO_SUPPORT". */
-// #define PASSIVE_PIEZO_SUPPORT  /// if a passive buzzer has been installed by user.
-#ifdef PASSIVE_PIEZO_SUPPORT
-#warning Built with PASSIVE_PIEZO support
-#endif  // PASSIVE_PIEZO_SUPPORT
-
-
-/* Support of an optional (external) temperature and humidity sensor (DHT22) or temperature, humidity and atmospheric pressure sensor (BME280)
-   to read and display those parameters. The sensors must be bought and installed by user. They are not included with the Pico Green Clock.
-   If you did install one, cut this block and paste it outside of the "#ifdef DEVELOPER_VERSION" and "#endif" to enable the "#define DHT_SUPPORT and / or 
-   "#define BME280_SUPPORT". */
-#define DHT_SUPPORT  /// if a DHT22 temperature and humidity sensor has been installed by user.
-#ifdef DHT_SUPPORT
-#warning Built with DHT22 support
-#endif  // DHT_SUPPORT
-
-#define BME280_SUPPORT  /// if a BME280 temperature, humidity and barometric pressure sensor has been installed by user.
-#ifdef BME280_SUPPORT
-#warning Built with BME280 support
-#endif  // BME280_SUPPORT
-
-
-/* Support of an optional remote control to interact with the clock remotely, for example when the clock is installed
-   too high and is out of reach. There is no remote control provided with the clock. It must be bought by the user.
-   Current support is for a Memorex remote control, model MCR 5221 that I had readily available. If another brand of
-   remote control is to be used, user will have to decode its protocol and implement it in the Green Clock firmware.
-   (a file similar to "memorex.cpp" must be created to support the new remote control).
-   If you did install an infrared sensor, cut this block and paste it outside of the "#ifdef DEVELOPER_VERSION" and "#endif" to enable the "#define IR_SUPPORT".
-   You also need to replace the default "REMOTE_FILENAME" by the filename you created containing the infrared timing / codes corresponding to your remote control.
-   You may want to check the Pico-Remote-Analyzer utility in one of my repositories. */
-#define IR_SUPPORT // if an infrared sensor (VS1838B-type) has been installed by the user and IR protocol of the remote control has been analyzed and implemented.
-
-/* Specify the file containing the remote control protocol to be used. */
-#define REMOTE_FILENAME "memorex.cpp"
-
-/* Silence period request unit (in minutes). Needs remote control. */
-#define SILENCE_PERIOD_UNIT 30
-#ifdef IR_SUPPORT
-#warning Built with INFRARED support
-#endif  // IR_SUPPORT
-#endif  // DEVELOPER_VERSION
-
-/* ----------------------------------------------------------------------------------------------------------------------- *\
-                                            End of setup specific to DEVELOPER version
-\* ----------------------------------------------------------------------------------------------------------------------- */
-
-
-
-/* Determine if date scrolling will be enable by default when the clock starts. */
-#define SCROLL_DEFAULT FLAG_ON  // choices are FLAG_ON / FLAG_OFF
-
-/* Scroll one dot to the left every such milliseconds (80 is a good start point. lower = faster). */
-#define SCROLL_DOT_TIME 66      // this is a UINT8 (must be between 0 and 255).
-
-/* Date, temperature and other options will scroll at this frequency
-   (in minutes - we must leave enough time for the previous scroll to complete). */
-#define SCROLL_PERIOD_MINUTE 5
-
-/* Default temperature unit to display on the clock. */
-#define TEMPERATURE_DEFAULT CELSIUS  // choices are CELSIUS and FAHRENHEIT.
-
-/* Time will be displayed in 24-hours format by default. */
-#define TIME_DISPLAY_DEFAULT H24     // choices are H12 and H24.
-
-/* Exit setup mode after this period of inactivity (in seconds). (for "clock setup", "alarm setup" or "timer setup"). */
-#define TIME_OUT_PERIOD 20
-
-/* Maximum number of seconds an alarm will ring. It will be automatically shut Off after this period in seconds
-   if user has not pressed yet the "Set" (top) button. */
-#define MAX_ALARM_RING_TIME 3600 // (in seconds) alarm will be automatically shut Off after ringing for one hour (3600 seconds).
-
-/* Night light default values. "AUTO" is based on ambient light reading to turn night light On or Off. */
-#define NIGHT_LIGHT_DEFAULT   NIGHT_LIGHT_AUTO  // choices are NIGHT_LIGHT_OFF / NIGHT_LIGHT_ON / NIGHT_LIGHT_NIGHT / NIGHT_LIGHT_AUTO
-#define NIGHT_LIGHT_TIME_ON   21                // if "NIGHT_LIGHT_NIGHT", LEDs will turn On  at this time (in the evening).
-#define NIGHT_LIGHT_TIME_OFF   8                // if "NIGHT_LIGHT_NIGHT", LEDs will turn Off at this time (in the morning).
-
-/* Hourly chime default values. */
-#define CHIME_DEFAULT  CHIME_DAY         // choices are CHIME_OFF / CHIME_ON / CHIME_DAY
-#define CHIME_TIME_ON          9         // if "CHIME_DAY", "hourly chime" and "calendar event" will sound beginning at this time (in the morning).
-#define CHIME_TIME_OFF        21         // if "CHIME_DAY", "hourly chime" and "calendar event" will sound for the last time at this time (in the evening).
-#define CHIME_HALF_HOUR  FLAG_ON         // if "FLAG_ON", will sound a "double-beep" on half-hour (every xxh30), compliant to chime settings above.
-#define CHIME_HOUR_COUNT FLAG_OFF        // if "FLAG_ON", hourly chime will beep a number of times equivalent to the hour value in 12-hour format.
-#define CHIME_HOUR_COUNT_BEEP_DURATION 300  // duration of "hour count" beeps (in msec) when flag above is On.
-/* NOTE: See also revision history above (or User guide) about "night time workers" support for hourly chime. */
-
-/* For active buzzer integrated in Pico Green Clock. Number of "tones" for each "sound pack" (first level of repetition). */
-#define TONE_CHIME_REPEAT1     2
-#define TONE_EVENT_REPEAT1     5
-#define TONE_KEYCLICK_REPEAT1  1
-#define TONE_TIMER_REPEAT1     4
-
-/* For active buzzer integrated in Pico Green Clock.
-   Number of times the "sound pack" above will repeat itself for each tone type (second level of repetition).
-   for example, if TONE_CHIME_REPEAT_1 is set to 3 and TONE_CHIME_REPEAT_2 is set to 2, we will hear:
-   beep-beep-beep..........beep-beep-beep (three beeps, twice). */
-#define TONE_CHIME_REPEAT2     3
-#define TONE_EVENT_REPEAT2     3
-#define TONE_KEYCLICK_REPEAT2  1
-#define TONE_TIMER_REPEAT2     2
-
-/* For active buzzer integrated in Pico Green Clock.
-   Time duration for different tone types (in milliseconds). This is the time of each sound inside one "sound pack".
-   will be rounded-up by the clock to the next 50 milliseconds multiple.
-   We can separate sounds - or group of sound - by adding a silence (for example: "sound_queue_active(50, SILENT);"). */
-#define TONE_CHIME_DURATION     50   // when sounding an hourly chime.
-#define TONE_EVENT_DURATION    200   // when scrolling a calendar event.
-#define TONE_KEYCLICK_DURATION  50   // when pressing a button ("keyclick").
-#define TONE_TIMER_DURATION    100   // when count-down timer reaches 00m00s.
-
-/* ================================================================== *\
-            ===== END OF CLOCK CONFIGURATION OR OPTIONS =====
-\* ================================================================== */
-
-
-
-
-
-/* $TITLE=Definitions and include files. */
-/* $PAGE */
-/* ------------------------------------------------------------------ *\
-                    Definitions and include files
-                       (in alphabetical order)
-\* ------------------------------------------------------------------ */
-/* Miscellaneous defines. */
-#define ALARM_PERIOD              5         // alarm ringer restart every x seconds (part of the whole "nine alarms algorithm").
-#define CELSIUS                   0x00
-#define CHIME_DAY                 0x02      // hourly chime is ON during defined daily hours (between CHIME_TIME_ON and CHIME_TIME_OFF).
-#define CHIME_OFF                 0x00      // hourly chime is OFF.
-#define CHIME_ON                  0x01      // hourly chime is ON.
-#define COUNT_DOWN_DELAY          7         // number of seconds between each count-down alarm sound burst.
-#define CRC16_POLYNOM             0x1021    // different polynom values are used by different authorities. (0x8005, 0x1021, 0x1DCF, 0x755B, 0x5935, 0x3D65, 0x8BB7, 0x0589, 0xC867, 0xA02B, 0x2F15, 0x6815, 0xC599, 0x202D, 0x0805, 0x1CF5)
-#define DEFAULT_YEAR_CENTILE      20        // to be used as a default before flash configuration is read (to be displayed in debug log).
-#define DELTA_TIME                60000000ll
-#define DISPLAY_BUFFER_SIZE       248       // size of framebuffer.
-#define EVENT_MINUTE1             14        // (Must be between 0 and 57) Calendar Events will checked when minutes reach this number (should preferably be selected out of peak periods).
-#define EVENT_MINUTE2             44        // (Must be between 0 and 57) Calendar Events will checked when minutes reach this number (should preferably be selected out of peak periods).
-#define FAHRENHEIT                !CELSIUS  // temperature unit to display.
-#define FALSE                     0x00
-#define FLAG_OFF                  0x00      // flag is OFF.
-#define FLAG_ON                   0x01      // flag is ON.
-#define FLAG_POLL                 0x02
-#define FLAG_WAIT                 0x03      // special flag asking passive sound queue to wait for active sound queue to complete.
-#define FLASH_CONFIG_OFFSET       0x1FF000  // offset in the Pico's 2 MB where to save data. Starting at 2.00MB - 4096 bytes (very end of flash).
-#define H12                       FLAG_OFF  // 12-hours time format.
-#define H24                       FLAG_ON   // 24-hours time format.
-#define MAX_ACTIVE_SOUND_QUEUE    100       // maximum number of "sounds" in the active buzzer sound queue.
-#define MAX_ALARMS                9         // total number of alarms available.
-#define MAX_LIGHT_SLOTS           24        // number of slots for ambient light level hysteresis.
-#define MAX_COMMAND_QUEUE         25        // maximim number of active commands in command queue.
-#define MAX_CORE_QUEUE            25        // maximum number of active commands in each circular buffers for inter-core communication (core0-to-core1 and core1-to-core0).
-#define MAX_COUNT_DOWN_ALARM_DURATION 30    // maximum period of time (in minutes) during which count-down alarm will ring if not reset by user (quick press on "Set" button).
-#define MAX_DHT_READINGS          100       // maximum number of "logic level changes" while reading DHT22 data stream.
-#define MAX_EVENTS                50        // maximum number of "calendar events" that can be programmed in the source code.
-#define MAX_IR_READINGS           500       // maximum number of "logic level changes" while receiving data from IR remote control.
-#define MAX_PASSIVE_SOUND_QUEUE   500       // maximum number of "sounds" in the passive buzzer sound queue.
-#define MAX_REMINDERS1            50        // maximum number of "reminders" of type 1 that can be defined.
-#define MAX_SCROLL_QUEUE          75        // maximum number of messages in the scroll buffer queue (big enough to cover MAX_EVENTS defined for the same day + a few extra date scrolls).
-#define NIGHT_LIGHT_AUTO          0x03      // night light will turn On when ambient light is low enough
-#define NIGHT_LIGHT_NIGHT         0x02      // night light On between NightLightTimeOn and NightLightTimeOff.
-#define NIGHT_LIGHT_OFF           0x00      // night light always Off.
-#define NIGHT_LIGHT_ON            0x01      // night light always On.
-#define TIMER_COUNT_DOWN          0x01      // timer mode is "Count Down".
-#define TIMER_COUNT_UP            0x02      // timer mode is "Count Up".
-#define TIMER_OFF                 0x00      // timer is currently OFF.
-#define TRUE                      0x01
-#define TYPE_PICO                 0x01      // microcontroller is a Pico
-#define TYPE_PICO_W               0x02      // microcontroller is a Pico W
-
-
-/* DayOfWeek definitions. */
-#define ALL 0x00  // All days
-#define SUN 0x01  // Sunday
-#define MON 0x02  // Monday
-#define TUE 0x03  // Tuesday
-#define WED 0x04  // Wednesday
-#define THU 0x05  // Thursday
-#define FRI 0x06  // Friday
-#define SAT 0x07  // Saturday
-
-
-/* Month definitions. */
-#define JAN 1   // January
-#define FEB 2   // February
-#define MAR 3   // March
-#define APR 4   // April
-#define MAY 5   // May
-#define JUN 6   // June
-#define JUL 7   // July
-#define AUG 8   // August
-#define SEP 9   // September
-#define OCT 10  // October
-#define NOV 11  // November
-#define DEC 12  // December
-
-
-/* Language and locals used. */
-#define LANGUAGE_LO_LIMIT 0x00
-#define ENGLISH           0x01
-#define FRENCH            0x02
-#define GERMAN            0x03
-#define CZECH             0x04
-#define SPANISH           0x05
-#define LANGUAGE_HI_LIMIT 0x06
-
-
-/* List of commands to be processed by command queue handler (while in the "main()" thread context). */
-#define COMMAND_PLAY_JINGLE       0x01
-
-
-/* Inter-core commands / messages. */
-/* For target: core 0. */
-#define CORE0_DHT_ERROR           0x01
-#define CORE0_DHT_READ_COMPLETED  0x02
-
-/* For target: core 1. */
-#define CORE1_READ_DHT            0x01
-
-
-/* "Display modes" used with remote control while in "Generic display mode". */
-#define DISPLAY_LO_LIMIT     0x00
-#define DISPLAY_TIME         0x01
-#define DISPLAY_DATE         0x02
-#define DISPLAY_DST          0x03
-#define DISPLAY_BEEP         0x04
-#define DISPLAY_SCROLLING    0x05
-#define DISPLAY_TEMP_UNIT    0x06
-#define DISPLAY_LANGUAGE     0x07
-#define DISPLAY_TIME_FORMAT  0x08
-#define DISPLAY_HOURLY_CHIME 0x09
-#define DISPLAY_NIGHT_LIGHT  0x0A
-#define DISPLAY_DIM          0x0B
-#define DISPLAY_HI_LIMIT     0x0C
-
-
-/* DST_COUNTRY valid choices (see details in User Guide). */
-// #define DST_DEBUG                    /// this define to be used only for intensive DST debugging purposes.
-#define DST_LO_LIMIT        0           // this specific define only to make the logic easier in the code.
-#define DST_NONE            0           // there is no "Daylight Saving Time" in user's country.
-#define DST_AUSTRALIA       1           // daylight saving time for most of Australia.
-#define DST_AUSTRALIA_HOWE  2           // daylight saving time for Australia - Lord Howe Island.
-#define DST_CHILE           3           // daylight saving time for Chile.
-#define DST_CUBA            4           // daylight saving time for Cuba.
-#define DST_EUROPE          5           // daylight saving time for European Union.
-#define DST_ISRAEL          6           // daylight saving time for Israel.
-#define DST_LEBANON         7           // daylight saving time for Lebanon.
-#define DST_MOLDOVA         8           // daylight saving time for Moldova.
-#define DST_NEW_ZEALAND     9           // daylight saving time for New Zealand.
-#define DST_NORTH_AMERICA  10           // daylight saving time for most of Canada and United States.
-#define DST_PALESTINE      11           // daylight saving time for Palestine.
-#define DST_PARAGUAY       12           // daylight saving time for Paraguay.IR_DISPLAY_GENERIC
-#define DST_HI_LIMIT       13           // to make the logic easier in the firmware.
-
-
-/* List or commands available with remote control. */
-#ifdef  IR_SUPPORT
-#define IR_LO_LIMIT                  0x00
-#define IR_BUTTON_TOP_QUICK          0x01
-#define IR_BUTTON_TOP_LONG           0x02
-#define IR_BUTTON_MIDDLE_QUICK       0x03
-#define IR_BUTTON_MIDDLE_LONG        0x04
-#define IR_BUTTON_BOTTOM_QUICK       0x05
-#define IR_BUTTON_BOTTOM_LONG        0x06
-#define IR_DICE_ROLLING              0x07
-#define IR_DISPLAY_AMBIENT_LIGHT     0x08
-#define IR_DISPLAY_EVENTS_THIS_WEEK  0x09
-#define IR_DISPLAY_EVENTS_TODAY      0x0A
-#define IR_DISPLAY_GENERIC           0x0B
-#define IR_DISPLAY_OUTSIDE_TEMP      0x0C
-#define IR_DISPLAY_SECOND            0x0D
-#define IR_FULL_TEST                 0x0E
-#define IR_IDLE_TIME                 0x0F
-#define IR_POWER_ON_OFF              0x10
-#define IR_SILENCE_PERIOD            0x11
-#define IR_HI_LIMIT                  0x12
-#endif
-
-
-/* Clock mode definitions. */
-#define MODE_LO_LIMIT      0x00
-#define MODE_UNDEFINED     0x00  // mode is currently undefined.
-#define MODE_ALARM_SETUP   0x01  // user is setting up one or more alarms.
-#define MODE_CLOCK_SETUP   0x02  // user is setting up clock parameters.
-#define MODE_DISPLAY       0x03  // generic display mode used with IR remote control.
-#define MODE_POWER_UP      0x04  // clock has just been powered-up.
-#define MODE_SCROLLING     0x05  // clock is scrolling data on the display.
-#define MODE_SHOW_TIME     0x06  // clock is displaying time ("normal" mode).
-#define MODE_SHOW_VOLTAGE  0x07  // clock is displaying power supply voltage.
-#define MODE_TEST          0x08  // clock is in test mode (to disable automatic clock behaviors on the display).
-#define MODE_TIMER_SETUP   0x09  // user is setting up a timer.
-#define MODE_HI_LIMIT      0x10
-
-
-/* PWM - "Pulse Wide Modulation" is currently used to control sound on passive buzzer and clock display brightness. */
-#define PWM_LO_LIMIT       0x00
-#define PWM_SOUND          0x00
-#define PWM_BRIGHTNESS     0x01
-#define PWM_HI_LIMIT       0x02
-
-
-/* Alarm setup steps definitions. */
-#define SETUP_ALARM_LO_LIMIT  0x00
-#define SETUP_ALARM_NUMBER    0x01
-#define SETUP_ALARM_ON_OFF    0x02
-#define SETUP_ALARM_HOUR      0x03
-#define SETUP_ALARM_MINUTE    0x04
-#define SETUP_ALARM_DAY       0x05
-#define SETUP_ALARM_HI_LIMIT  0x06
-
-/* NOTE: Clock setup step definitions are kept as variables and can be seen in the variables section below. */
-
-/* Setup source definitions. */
-#define SETUP_SOURCE_NONE     0x00
-#define SETUP_SOURCE_ALARM    0x01
-#define SETUP_SOURCE_CLOCK    0x02
-#define SETUP_SOURCE_TIMER    0x03
-
-
-/* Timer setup steps definitions. */
-#define SETUP_TIMER_LO_LIMIT  0x00
-#define SETUP_TIMER_UP_DOWN   0x01
-#define SETUP_TIMER_MINUTE    0x02
-#define SETUP_TIMER_SECOND    0x03
-#define SETUP_TIMER_READY     0x04
-#define SETUP_TIMER_HI_LIMIT  0x05
-
-
-/* Tags that can be used in process_scroll() function. */
-#define TAG_AMBIENT_LIGHT      0xFF   // tag used to scroll current ambient light information.
-#define TAG_BME280_DEVICE_ID   0xFE   // tag used to scroll the BME280 device id (should be 0x60 for a "real" BME280).
-#define TAG_BME280_TEMP        0xFD   // tag used to display temperature, relative humidity and atmospheric pressure read from an optional BME280 sensor.
-#define TAG_WIFI_CREDENTIALS   0xFC
-#define TAG_DATE               0xFB   // tag used to scroll current date, temperature and power supply voltage.
-#define TAG_DEBUG              0xFA   // tag used to scroll variables for debug purposes, while in main() context.
-#define TAG_DHT22_TEMP         0xF9   // tag used to display temperature read from an optional DHT22 temperature and humidity sensor.
-#define TAG_DS3231_TEMP        0xF8   // tag used to display ambient temperature read from DS3231 real-time IC in the Green Clock.
-#define TAG_DST                0xF7   // tag used to scroll daylight saving time ("DST") information and status on clock display.
-#define TAG_FIRMWARE_VERSION   0xF6   // tag used to display Pico Green Clock firmware version.
-#define TAG_IDLE_MONITOR       0xF5   // tag used to scroll current System Idle Monitor on clock display.
-#define TAG_INFO               0xF4   // tag used to display information while in "main()" context.
-#define TAG_NTP_ERRORS         0xF3   // tag used to scroll cumulative number of errors in NTP requests.
-#define TAG_NTP_STATUS         0xF2   // tag used to scroll cumulative number of errors in NTP requests.
-#define TAG_PICO_TEMP          0xF1   // tag used to display Pico internal temperature.
-#define TAG_PICO_TYPE          0xF0   // tag used to display the type of microcontroller installed (Pico or Pico W).
-#define TAG_PICO_UNIQUE_ID     0xEF   // tag used to display Pico (flash) unique ID.
-#define TAG_QUEUE              0xEE   // tag used to display "Head", "Tail", and "Tag" of currently used scroll queue (for debugging purposes).
-#define TAG_TIMEZONE           0xED   // tag used to display Universal Coordinated Time information.
-#define TAG_VOLTAGE            0xEC   // tag used to display power supply voltage.
-
-
-#define SILENT        0
-#define WAIT_4_ACTIVE 0xFFFF  // request passive sound queue to wait for active sound queue to complete.
-
-
-/* Music tones definitions. */
-#ifdef PASSIVE_PIEZO_SUPPORT
-#define DO_a         262
-#define DO_DIESE_a   277
-#define RE_a         294
-#define RE_DIESE_a   311
-#define MI_a         330
-#define FA_a         349
-#define FA_DIESE_a   370
-#define SOL_a        392
-#define SOL_DIESE_a  415
-#define LA_a         440
-#define LA_DIESE_a   466
-#define SI_a         494
-#define DO_b         523
-#define DO_DIESE_b   554
-#define RE_b         587
-#define RE_DIESE_b   622
-#define MI_b         659
-#define FA_b         699
-#define FA_DIESE_b   740
-#define SOL_b        784
-#define SOL_DIESE_b  831
-#define LA_b         880
-#define LA_DIESE_b   932
-#define SI_b         988
-#define DO_c        1047
-#define DO_DIESE_c  1109
-#define RE_c        1175
-#define RE_DIESE_c  1245
-#define MI_c        1319
-#define FA_c        1397
-#define FA_DIESE_c  1480
-#define SOL_c       1568
-#define SOL_DIESE_c 1661
-#define LA_c        1760
-#define LA_DIESE_c  1865
-#define SI_c        1976
-
-
-/* Jingle definitions. */
-#define JINGLE_LO_LIMIT  0x00
-#define JINGLE_BIRTHDAY  0x01
-#define JINGLE_ENCOUNTER 0x02
-#define JINGLE_FETE      0x03
-#define JINGLE_RACING    0x04
-#define JINGLE_HI_LIMIT  0x05
-#else
-/* Jingle definitions. Placeholder only if not using a passive piezo. */
-#define JINGLE_LO_LIMIT  0x00
-#define JINGLE_BIRTHDAY  0x00
-#define JINGLE_ENCOUNTER 0x00
-#define JINGLE_FETE      0x00
-#define JINGLE_RACING    0x00
-#define JINGLE_HI_LIMIT  0x00
-#endif
-
-
 /* Include files. */
+#include "pico-green-clock.h"
+#include "configuration.h"
 #include "bitmap.h"
 #include "ctype.h"
 #include "debug.h"
@@ -811,14 +308,9 @@
 #include "picow_ntp_client.h"
 #endif  // PICO_W
 
+#include "typedefs.h"
 
-typedef unsigned int  UINT;   // processor-optimized.
-typedef uint8_t       UINT8;
-typedef uint16_t      UINT16;
-typedef uint32_t      UINT32;
-typedef uint64_t      UINT64;
-typedef unsigned char UCHAR;
-
+struct flash_config FlashConfig;
 
 /* Clock setup step definitions. */
 /* They are not categorized as #define since there is a difference in the
@@ -883,18 +375,6 @@ struct event
 
 /* Events to scroll on clock display at specific dates. Must be setup by user. Some examples are already defined. */
 #include CALENDAR_FILENAME
-
-
-/* Alarm definitions. */
-struct alarm
-{
-  UINT8 FlagStatus;
-  UINT8 Second;
-  UINT8 Minute;
-  UINT8 Hour;
-  UINT8 Day;
-  UCHAR Text[40];
-};
 
 
 /* Command definitions for command queue. */
@@ -1022,38 +502,6 @@ struct sound_passive
   UINT16 Freq;
   UINT16 MSec;
 };
-
-
-/* Structure containing the Green Clock configuration being saved to flash memory.
-   Those variables will be restored after a reboot and / or power failure. */
-/* IMPORTANT: Version must always be the first element of the structure and
-              CRC16   must always be the  last element of the structure. */
-struct flash_config
-{
-  UCHAR  Version[6];          // firmware version number (format: "06.00" - including end-of-string).
-  UINT8  CurrentYearCentile;  // assume we are in years 20xx on power-up but is adjusted when configuration is read (will your clock live long enough for a "21" ?!).
-  UINT8  Language;            // language used for data display (including date scrolling).
-  UCHAR  DSTCountry;  // specifies how to handle the daylight saving time (see User Guide and / or clock options above).
-  UINT8  TemperatureUnit;     // CELSIUS or FAHRENHEIT default value (see clock options above).
-  UINT8  TimeDisplayMode;     // H24 or H12 default value (see clock options above).
-  UINT8  ChimeMode;           // chime mode (Off / On / Day).
-  UINT8  ChimeTimeOn;         // hourly chime will begin at this hour.
-  UINT8  ChimeTimeOff;        // hourly chime will stop after this hour.
-  UINT8  NightLightMode;      // night light mode (On / Off / Auto / Night).
-  UINT8  NightLightTimeOn;    // default night light time On.
-  UINT8  NightLightTimeOff;   // default night light time Off.
-  UINT8  FlagAutoBrightness;  // flag indicating we are in "Auto Brightness" mode.
-  UINT8  FlagKeyclick;        // flag for keyclick ("button-press" tone)
-  UINT8  FlagScrollEnable;    // flag indicating the clock will scroll the date and temperature at regular intervals on the display.
-  UINT8  FlagSummerTime;      // flag indicating the current status (On or Off) of Daylight Saving Time / Summer Time.
-  int8_t Timezone;            // (in hours) value to add to UTC time (Universal Time Coordinate) to get the local time.
-  UINT8  Reserved1[48];       // reserved for future use.
-  struct alarm Alarm[9];      // alarms 0 to 8 parameters (numbered 1 to 9 for clock users). Day is a bit mask.
-  UCHAR  SSID[40];            // SSID for Wi-Fi network. Note: SSID begins at position 5 of the variable string, so that a "footprint" can be confirmed prior to writing to flash.
-  UCHAR  Password[70];        // password for Wi-Fi network. Note: password begins at position 5 of the variable string, for the same reason as SSID above.
-  UCHAR  Reserved2[48];       // reserved for future use.
-  UINT16 Crc16;               // crc16 of all data above to validate configuration.
-} FlashConfig;
 
 
 #ifdef BME280_SUPPORT
@@ -1358,8 +806,6 @@ struct dht_data DhtData;
 /* ------------------------------------------------------------------ *\
                          Function prototypes
 \* ------------------------------------------------------------------ */
-/* Read ambient light level from Pico's analog-to-digital gpio. */
-UINT16 adc_read_light(void);
 
 /* Read Pico's internal temperature from Pico's analog-to-digital gpio. */
 void adc_read_pico_temp(float *DegreeC, float *DegreeF);
@@ -1508,9 +954,6 @@ void pwm_initialize(void);
 /* Turn On or Off the PWM signal specified in argument. */
 void pwm_on_off(UINT8 PwmNumber, UINT8 FlagSwitch);
 
-/* Set the duty cycle for the PWM used for clock display brightness. */
-void pwm_set_duty_cycle(UINT8 DutyCycle);
-
 /* Set the frequency for the PWM used for passive buzzer. */
 void pwm_set_frequency(UINT16 Frequency);
 
@@ -1595,9 +1038,6 @@ void tone(UINT16 MilliSeconds);
 
 /* Return total number of "one" bits in the given integer. */
 uint8_t total_one_bits(UINT32 Data, UINT8 Size);
-
-/* Send a string to an external terminal emulator program through Pico's UART (or serial port). */
-void uart_send(UINT LineNumber, UCHAR *Format, ...);
 
 /* Return the string representing the uint64_t parameter in binary. */
 void uint64_to_binary_string(UINT64 Value, UINT8 StringLength, UCHAR *BinaryString);
@@ -1968,13 +1408,13 @@ int main(void)
   DebugBitMask  = DEBUG_NONE;
   // DebugBitMask += DEBUG_ALARMS;
   // DebugBitMask += DEBUG_BME280;
-  // DebugBitMask += DEBUG_BRIGHTNESS;
+  DebugBitMask += DEBUG_BRIGHTNESS;
   // DebugBitMask += DEBUG_CHIME;
   // DebugBitMask += DEBUG_COMMAND_QUEUE;
   // DebugBitMask += DEBUG_CORE;
   // DebugBitMask += DEBUG_CRC16;
   // DebugBitMask += DEBUG_DHT;
-  DebugBitMask += DEBUG_DST;
+  //DebugBitMask += DEBUG_DST;
   // DebugBitMask += DEBUG_EVENT;
   // DebugBitMask += DEBUG_FLASH;
   // DebugBitMask += DEBUG_IDLE_MONITOR;
@@ -1982,8 +1422,8 @@ int main(void)
   // DebugBitMask += DEBUG_IR_COMMAND;
   DebugBitMask += DEBUG_NTP;
   // DebugBitMask += DEBUG_PICO_W;
-  // DebugBitMask += DEBUG_PWM;
-  DebugBitMask += DEBUG_REMINDER;
+   DebugBitMask += DEBUG_PWM;
+  //DebugBitMask += DEBUG_REMINDER;
   DebugBitMask += DEBUG_RTC;
   // DebugBitMask += DEBUG_SOUND_QUEUE;
   // DebugBitMask += DEBUG_SCROLL;
@@ -2220,7 +1660,7 @@ int main(void)
     }
 
     sprintf(FlashConfig.Version, "7.00");   // convert to Version 7.00.
-    FlashConfig.Timezone       = 0;         // assign default value within valid range.
+    FlashConfig.Timezone       = TIMEZONE;         // assign default value within valid range.
     FlashConfig.FlagSummerTime = FLAG_OFF;  // FlashConfig.FlagSummerTime will be evaluated and overwritten below.
   
     if (DebugBitMask & DEBUG_FLASH)
@@ -2290,7 +1730,9 @@ int main(void)
   // sprintf(&FlashConfig.SSID[4],     "MyNetworkName");
   // sprintf(&FlashConfig.Password[4], "MyNetworkPassword");
   #ifdef DEVELOPER_VERSION
-  #include "Credentials.cpp"
+ // #include "Credentials.cpp"
+  #else
+ // #include "Credentials.cpp"
   #endif
   /***/
 
@@ -2867,7 +2309,7 @@ int main(void)
   
     case (ENGLISH):
     default:
-      sprintf(String, "Pico Green Clock - Firmware Version %s    ", FIRMWARE_VERSION);
+      sprintf(String, "Pico Clock - V%s    ", FIRMWARE_VERSION);
     break;
 
     case (FRENCH):
@@ -3021,7 +2463,7 @@ int main(void)
                       the main program loop below.
   \* ---------------------------------------------------------------- */
   scroll_queue(TAG_PICO_TYPE);
-  scroll_queue(TAG_PICO_UNIQUE_ID);
+  //scroll_queue(TAG_PICO_UNIQUE_ID);
 
 
 
@@ -3039,7 +2481,7 @@ int main(void)
            NOTE: Scroll queue will be processed when entering
                       the main program loop below.
   \* ---------------------------------------------------------------- */
-  scroll_queue(TAG_VOLTAGE);
+  //scroll_queue(TAG_VOLTAGE);
 
 
 
@@ -3191,7 +2633,9 @@ int main(void)
     #ifdef PICO_W
     /* Manage NTP resync. */
     CurrentTimerValue = time_us_64();
-    if ((NTPData.FlagNTPResync) || (CurrentTimerValue >= (NTPData.NTPLastUpdate + DELTA_TIME)))
+    if ((NTPData.FlagNTPResync) || (CurrentTimerValue >= (NTPData.NTPLastUpdate + 
+        30 * //seltener abfragen! DELTA_TIME in usec -> 1 Minute
+        DELTA_TIME)))
     {
       if (DebugBitMask & DEBUG_NTP)
         uart_send(__LINE__, "Requesting Green Clock synchronization through NTP  (FlagNTPResync: %2.2u)\r", NTPData.FlagNTPResync);
@@ -3664,86 +3108,6 @@ float adc_read_voltage(void)
 }
 
 
-
-
-
-/* $PAGE */
-/* $TITLE=adjust_clock_brightness() */
-/* --------------------------------------------------------------------- *\
-    Read ambient light level from Pico's analog-to-digital gpio, where
-                   a photo resistor has been connected 
-            (inside the Green Clock, above the USB connector)
-         and then, adjust clock display brightness according to 
-     average ambient light level for the last 60 seconds (hysteresis).
-    NOTE: Clock must be setup for auto-brightness. Refer to User Guide
-\* --------------------------------------------------------------------- */
-void adjust_clock_brightness(void)
-{
-  UCHAR String[128];
-
-  UINT Loop1UInt;
-  static UINT NextCell = 0;  // point to next slot of circular buffer to be read.
-
-  UINT16 AverageLevel;
-  UINT16 DutyCycle;
-
-  static UINT16 AmbientLightMSecCounter;
-  static UINT16 LightLevel[MAX_LIGHT_SLOTS] = {550, 550, 550, 550, 550, 550, 550, 550, 550, 550, 550, 550, 550, 550, 550, 550, 550, 550, 550, 550, 550, 550, 550, 550};  // assume average ambient light level on entry.
-
-  int32_t TempLevel;
-
-  static UINT64 CumulativeLightLevel;
-
-
-  /* If the clock has been setup for auto-brightness, get ambient light level from Pico's analog-to-digital converter.
-     (if clock is not in auto-brightness mode, an "average light level value" of 550 will be kept as default until auto-brightness is selected). */
-  if (FlashConfig.FlagAutoBrightness == FLAG_ON)
-  {
-    /* Cumulate 5000 readings of the ambient light value (5 seconds of readings every msec.). */
-    ++AmbientLightMSecCounter;
-    CumulativeLightLevel += adc_read_light();
-
-    
-    /* Check if 5000 milliseconds (5 seconds) have elapsed. */
-    if (AmbientLightMSecCounter >= 5000)
-    {
-      /* Reset the 5000 milliseconds counter. */
-      AmbientLightMSecCounter = 0;
-
-      /* Calculate the average ambient light level for the last five seconds (5000 milliseconds). */
-      LightLevel[NextCell++] = CumulativeLightLevel / 5000;  // average light level for the last 5 seconds.
-      if (NextCell >= MAX_LIGHT_SLOTS) NextCell = 0;         // replace the slot for the last 5-seconds period and when out-of-bound, revert to zero.
-      CumulativeLightLevel   = 0;
-
-
-      /* Calculate average ambient light level for the last minute, based on the "MAX_LIGHT_SLOTS" number of "5-seconds" light level slots. */
-      for (Loop1UInt = 0; Loop1UInt < MAX_LIGHT_SLOTS; ++Loop1UInt)
-        CumulativeLightLevel += LightLevel[Loop1UInt];
-
-
-      AverageLightLevel    = (CumulativeLightLevel / MAX_LIGHT_SLOTS);  // average light level for the last "MAX_LIGHT_SLOTS" number of "5-seconds" light level slots.
-      CumulativeLightLevel = 0;  // get ready to cumulate the next 5000 milliseconds.
-
-    
-      /* Update current clock display brightness, based on average ambient light level for the last 2 minutes (hysteresis).
-         Ambient light level goes from around 200 (very dark) to 1500 (very bright). */
-      AverageLevel = AverageLightLevel;
-      if (AverageLightLevel < 225) AverageLevel = 225;
-      if (AverageLightLevel > 525) AverageLevel = 525;
-      DutyCycle = (UINT16)((AverageLevel - 225) / 3.0);
-      pwm_set_duty_cycle(DutyCycle);
-
-
-      if (DebugBitMask & DEBUG_BRIGHTNESS)
-      {
-        uart_send(__LINE__, "Instant level: %4u   Av1: %4u   Av2: %4u   (Av2 - 200): %3u\r", adc_read_light(), AverageLightLevel, AverageLevel, (AverageLevel - 225));
-        uart_send(__LINE__, "((Av2 - 225) / 3.0): %3.2f   (UINT16)((Av2 - 225) / 3.0): %3u   Duty cycle: %3u\r\r", ((AverageLevel - 225) / 3.0), (UINT16)((AverageLevel - 225) / 3.0), DutyCycle);
-      }
-    }
-  }
-
-  return;
-}
 
 
 
@@ -5856,7 +5220,8 @@ UINT8 flash_read_config(void)
 
   if (FlashConfig.Crc16 == 0xFFFF)
   {
-    /* CRC16 is not valid. If CRC16 read from flash is 0xFFFF, we assume that no configuration has ever been saved to flash memory.
+    /* CRC16 is not valid. If CRC16 read from flash is 0xFFFF, 
+    we assume that no configuration has ever been saved to flash memory.
        If so, assign default values to configuration parameters and save it to flash. */
     if (DebugBitMask & DEBUG_FLASH)
     {
@@ -5879,7 +5244,8 @@ UINT8 flash_read_config(void)
   FlashConfig.CurrentYearCentile = 20;                    // assume we are in years 20xx. Green Clock was always reverting to 20.
   FlashConfig.Language           = DEFAULT_LANGUAGE;      // hourly chime will begin at this hour.
   FlashConfig.DSTCountry         = DST_COUNTRY;           // specifies how to handle the daylight saving time depending of country (see User Guide).
-  FlashConfig.Timezone           = 0;                     // time difference between local time and Universal Coordinated Time.
+  FlashConfig.Timezone           = TIMEZONE;                     // time difference between local time 
+                                                            //and Universal Coordinated Time.
   FlashConfig.FlagSummerTime     = FLAG_OFF;              // system will evaluate and overwrite this value on next power-up sequence.
   FlashConfig.TemperatureUnit    = TEMPERATURE_DEFAULT;   // CELSIUS or FAHRENHEIT default value (see clock options above).
   FlashConfig.TimeDisplayMode    = TIME_DISPLAY_DEFAULT;  // H24 or H12 default value (see clock options above).
@@ -5966,8 +5332,8 @@ UINT8 flash_read_config(void)
 
   sprintf(FlashConfig.SSID,     ".;.;.;.;.;.;.;.;.;.;.;.;.;.;.;.;.;.;.;.");                                // write specific footprint to flash memory.
   sprintf(FlashConfig.Password, ".:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.");  // write specific footprint to flash memory.
-  sprintf(&FlashConfig.SSID[4],     "MyNetworkName");
-  sprintf(&FlashConfig.Password[4], "MyPassword");
+  sprintf(&FlashConfig.SSID[4],     NETWORK_NAME);
+  sprintf(&FlashConfig.Password[4], NETWORK_PASSWORD);
 
   /* Make provision for future parameters. */
   for (Loop1UInt16 = 0; Loop1UInt16 < sizeof(FlashConfig.Reserved2); ++Loop1UInt16)
@@ -11734,7 +11100,8 @@ void set_mode_timeout(void)
   /* Check for an eventual change in Daylight Saving Time status. */
   update_dst_status();
 
-  /* Request a NTP re-sync if clock setup has been changed (Time, Date, or Timezone may have been changed). */
+  /* Request a NTP re-sync if clock setup has been changed (Time, Date, or Timezone 
+  may have been changed). */
   NTPData.FlagNTPResync = FLAG_ON;
 
   return;
