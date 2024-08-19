@@ -1,3 +1,16 @@
+This is a fork of André St-Louys' firmware for the Pico Green Clock, Version 9.02. 
+This fork keeps my personal adaptation separate from the original.
+
+# Details of this Fork
+* 
+
+
+
+
+
+# The Original Read Me
+======================
+
 # NOTE: For those looking for a "Network Time Protocol" (NTP) clock with many features, you may want to take a look at my "Pico-RGB-Matrix" repository...
 
 # Pico Green Clock
